@@ -15,7 +15,7 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'tu-clave-secreta-aqui-por-si-acaso')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-yqt!@@_g8+8$xxpf0s')
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 

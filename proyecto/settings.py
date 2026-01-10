@@ -88,9 +88,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
 
-# Al final de settings.py
-from django.contrib.auth import get_user_model
-User = get_user_model()
-# Cambia 'admin', 'tu@correo.com' y 'tu_password_segura' por lo que quieras
-if not User.objects.filter(username='admin').exists():
-    User.objects.create_superuser('Andy', 'andyalcivar@gmail.com', 'domingo9')
+

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bienvenido - Andy Alcívar Sánchez{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="col-lg-8 text-center py-5">
+
+      <h1 class="display-4 fw-bold mb-4 text-primary">
+        Bienvenido a mi<br>Hoja de Vida
+      </h1>
+
+      <p class="lead mb-5 text-muted">
+        Descubre mi experiencia profesional, formación académica y proyectos realizados<br>
+        de manera clara, organizada y fácil de navegar.
+      </p>
+
+      <hr class="w-50 mx-auto my-5" style="height: 3px; opacity: 0.5;">
+
+      <h3 class="mb-5">¿Qué deseas hacer?</h3>
+
+<div class="d-grid gap-4 col-10 col-md-8 mx-auto">
+  <a href="{% url 'pagina_usuario:hoja_de_vida' %}" class="btn btn-primary btn-lg py-4 fw-bold shadow">
+    <i class="bi bi-eye-fill me-2"></i> VER HOJA DE VIDA
+  </a>
+
+  <a href="{% url 'admin:index' %}" class="btn btn-outline-primary btn-lg py-4 fw-bold shadow">
+    <i class="bi bi-shield-lock-fill me-2"></i> INGRESAR COMO ADMINISTRADOR
+  </a>
+</div>
+
+<p class="mt-5 text-muted small">
+  © {% now "Y" %} Andy Josue Alcívar Sánchez – Manta, Ecuador
+</p>
+
+      <p class="mt-5 text-muted small">
+        © {{ 'now'|date:"Y" }} Andy Alcívar Sánchez
+      </p>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CV - {{ info_personal.nombre_completo }}</title>
+    <style>
+        @page { size: A4; margin: 0; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; color: #333; font-size: 11pt; }
+        
+        /* Contenedor Principal de dos columnas según tu diseño */
+        .cv-container { display: flex; min-height: 297mm; }
+        
+        /* Columna Izquierda (Azul Lateral) */
+        .sidebar { width: 30%; background-color: #b0d4e3; padding: 20px; box-sizing: border-box; }
+        .foto-container { text-align: center; margin-bottom: 20px; }
+        .foto-perfil { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #003354; object-fit: cover; }
+        
+        .sidebar-section-title { background-color: #003354; color: white; padding: 5px 10px; font-weight: bold; text-transform: uppercase; font-size: 10pt; margin: 20px 0 10px 0; }
+        .sidebar-item { margin-bottom: 8px; font-size: 9pt; }
+        .sidebar-label { font-weight: bold; text-transform: uppercase; display: block; font-size: 8pt; color: #003354; }
+
+        /* Columna Derecha (Blanca) */
+        .main-content { width: 70%; padding: 30px; box-sizing: border-box; }
+        .main-section-title { background-color: #003354; color: white; padding: 5px 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; margin-top: 10px; }
+        
+        .item { margin-bottom: 15px; }
+        .item-header { font-weight: bold; font-size: 12pt; display: block; }
+        .item-sub { color: #003354; font-weight: bold; font-size: 10pt; }
+        .item-date { color: #555; font-size: 9pt; margin-bottom: 5px; }
+        .item-desc { text-align: justify; line-height: 1.3; }
+
+        .no-print { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="cv-container">
+        <div class="sidebar">
+            <div class="foto-container">
+                {% if info_personal.foto_perfil %}
+                    <img src="{{ info_personal.foto_perfil.url }}" class="foto-perfil">
+                {% endif %}
+            </div>
+
+            <div class="sidebar-section-title">Detalles Personales</div>
+            <div class="sidebar-item">
+                <span class="sidebar-label">Nacionalidad</span>
+                {{ info_personal.nacionalidad }}
+            </div>
+            <div class="sidebar-item">
+                <span class="sidebar-label">Nacimiento</span>
+                {{ info_personal.fecha_nacimiento|date:"d M, Y" }}
+            </div>
+            <div class="sidebar-item">
+                <span class="sidebar-label">Estado Civil</span>
+                {{ info_personal.estado_civil }}
+            </div>
+            <div class="sidebar-item">
+                <span class="sidebar-label">Sexo</span>
+                {{ info_personal.get_sexo_display }}
+            </div>
+
+            <div class="sidebar-section-title">Contacto</div>
+            <div class="sidebar-item">
+                <span class="sidebar-label">Teléfono</span>
+                {{ info_personal.telefono_movil }}
+            </div>
+            <div class="sidebar-item">
+                <span class="sidebar-label">Email</span>
+                {{ info_personal.email }}
+            </div>
+            <div class="sidebar-item">
+                <span class="sidebar-label">Ubicación</span>
+                {{ info_personal.ubicacion }}
+            </div>
+        </div>
+
+        <div class="main-content">
+            <h1 style="color: #003354; margin: 0;">{{ info_personal.nombre_completo|upper }}</h1>
+            <p style="color: #3498db; font-weight: bold; margin-top: 5px;">{{ info_personal.titulo_profesional }}</p>
+
+            {% if request.GET.perfil %}
+            <div class="main-section-title">Perfil Profesional</div>
+            <div class="item-desc">{{ info_personal.resumen_profesional|linebreaks }}</div>
+            {% endif %}
+
+            {% if request.GET.experiencia %}
+            <div class="main-section-title">Experiencia Laboral</div>
+            {% for exp in experiencias %}
+            <div class="item">
+                <span class="item-header">♦ {{ exp.cargo }}</span>
+                <span class="item-sub">{{ exp.empresa }} | {{ exp.fecha_inicio|date:"Y" }} - {% if exp.fecha_fin %}{{ exp.fecha_fin|date:"Y" }}{% else %}Presente{% endif %}</span>
+                <div class="item-desc">{{ exp.descripcion|linebreaks }}</div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if request.GET.cursos %}
+            <div class="main-section-title">Formación Académica / Cursos</div>
+            {% for curso in cursos %}
+            <div class="item">
+                <span class="item-header">♦ {{ curso.nombre }}</span>
+                <span class="item-sub">{{ curso.institucion }} | Duración: {{ curso.total_horas }} horas</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if request.GET.reconocimientos %}
+            <div class="main-section-title">Reconocimientos y Logros</div>
+            {% for rec in reconocimientos %}
+            <div class="item">
+                <span class="item-header">♦ {{ rec.titulo }}</span>
+                <span class="item-sub">Entidad: {{ rec.entidad }} | {{ rec.fecha|date:"Y" }}</span>
+                <div class="item-desc" style="font-size: 10pt; font-style: italic; color: #444;">{{ rec.descripcion }}</div>
+                <div style="font-size: 8pt; color: #666; margin-top: 3px;">
+                    Ref: {{ rec.nombre_contacto }} - {{ rec.telefono_contacto }}
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if request.GET.proyectos %}
+            <div class="main-section-title">Proyectos</div>
+            {% for pro in proyectos %}
+            <div class="item">
+                <span class="item-header">♦ {{ pro.nombre }}</span>
+                <span class="item-date">Fecha: {{ pro.fecha|date:"d/m/Y" }}</span>
+                <div class="item-desc">Tecnologías: {{ pro.tecnologias }}</div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if request.GET.garage %}
+            <div class="main-section-title">Productos en Garage / Ventas</div>
+            {% for item in garage %}
+            <div class="item">
+                <span class="item-header">♦ {{ item.nombre }}</span>
+                <span class="item-sub">Valor: ${{ item.valor }}</span>
+                <div class="item-desc">{{ item.descripcion }}</div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bienvenido - Andy Alcívar Sánchez{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row justify-content-center align-items-center min-vh-100">
+    <div class="col-lg-8 col-md-10 text-center">
+
+      <!-- Tarjeta principal -->
+      <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 20px;">
+        <div class="card-body p-5 p-md-5 bg-gradient-primary text-white" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
+          
+          <h1 class="display-4 fw-bold mb-4">
+            Bienvenido a mi<br>Hoja de Vida
+          </h1>
+
+          <p class="lead mb-5 opacity-90">
+            Descubre mi experiencia profesional, formación académica y proyectos realizados<br>
+            de manera clara, organizada y fácil de navegar.
+          </p>
+
+          <hr class="w-50 mx-auto my-5 opacity-50" style="height: 3px;">
+
+          <h3 class="mb-5 fw-light">
+            ¿Qué deseas hacer?
+          </h3>
+
+          <!-- Botones principales -->
+          <div class="d-grid gap-4 col-10 col-md-8 mx-auto">
+            <a href="{% url 'pagina_principal' %}" class="btn btn-lg btn-light fw-bold shadow-lg py-4 fs-4">
+              <i class="bi bi-eye-fill me-2"></i> VER HOJA DE VIDA
+            </a>
+
+            <a href="{% url 'admin:index' %}" class="btn btn-lg btn-outline-light fw-bold shadow-lg py-4 fs-4">
+              <i class="bi bi-shield-lock-fill me-2"></i> INGRESAR COMO ADMINISTRADOR
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer pequeño -->
+      <p class="text-muted mt-5 small">
+        © {{ 'now'|date:"Y" }} Andy Alcívar Sánchez
+      </p>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

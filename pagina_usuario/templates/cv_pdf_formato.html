@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page { size: A4; margin: 0; }
+        body { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; margin: 0; padding: 0; color: #1a1a1a; line-height: 1.3; }
+        .main-wrapper { display: flex; width: 100%; min-height: 297mm; }
+        
+        /* BARRA LATERAL */
+        .sidebar { width: 35%; background-color: #B2D8E5; color: #00334E; padding: 30px 20px; box-sizing: border-box; }
+        .profile-container { text-align: center; margin-bottom: 20px; }
+        .profile-img { width: 140pt; height: 140pt; border-radius: 50%; border: 5pt solid #00334E; object-fit: cover; }
+        .sidebar-header { background-color: #00334E; color: white; font-size: 14pt; font-weight: bold; padding: 6pt; text-align: center; text-transform: uppercase; margin: 15pt 0 8pt 0; }
+        .data-group { margin-bottom: 8pt; border-bottom: 0.5pt solid rgba(0,51,78,0.2); padding-bottom: 2pt; }
+        .data-label { font-size: 9pt; font-weight: bold; text-transform: uppercase; color: #00334E; }
+        .data-value { font-size: 11pt; color: #1a1a1a; }
+
+        /* CUERPO PRINCIPAL */
+        .content { width: 65%; background-color: #ffffff; padding: 30px; box-sizing: border-box; }
+        .name-banner { background-color: #00334E; color: white; padding: 20pt; margin-bottom: 15pt; }
+        .full-name { font-size: 28pt; font-weight: 800; margin: 0; text-transform: uppercase; line-height: 1; }
+        .job-title { font-size: 15pt; color: #B2D8E5; margin-top: 5pt; font-weight: bold; }
+        .section-header { background-color: #00334E; color: white; font-size: 14pt; font-weight: bold; padding: 5pt 10pt; text-transform: uppercase; margin: 15pt 0 10pt 0; }
+
+        /* ESTRUCTURA DE ITEMS */
+        .item-container { margin-bottom: 12pt; display: flex; width: 100%; page-break-inside: avoid; }
+        .item-text { width: 100%; }
+        .item-text.with-image { width: 65%; padding-right: 10pt; }
+        .item-image-side { width: 35%; text-align: right; }
+        .side-img { width: 100%; max-height: 100pt; border: 1.5pt solid #00334E; border-radius: 4pt; object-fit: cover; }
+
+        .item-title { font-size: 13pt; font-weight: bold; color: #000; margin-bottom: 2pt; }
+        .item-meta { font-size: 10pt; color: #555; font-weight: bold; margin-bottom: 3pt; }
+        .item-desc { font-size: 11pt; text-align: justify; margin-bottom: 4pt; }
+        .extra-info { font-size: 10pt; color: #00334E; background: #f0f7f9; padding: 3pt 6pt; border-radius: 3pt; display: inline-block; margin-top: 2pt; }
+
+        /* ANEXOS */
+        .page-break { display: block; page-break-before: always; }
+        .cert-img { display: block; width: 100%; max-height: 220mm; margin: 15pt auto; border: 2pt solid #00334E; object-fit: contain; }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div class="sidebar">
+            <div class="profile-container">
+                {% if info_personal.foto_perfil %}
+                    <img src="file:///{{ info_personal.foto_perfil.path }}" class="profile-img">
+                {% endif %}
+            </div>
+            <div class="sidebar-header">Detalles Personales</div>
+            <div class="data-group">
+                <div class="data-label">Nacionalidad</div>
+                <div class="data-value">{{ info_personal.nacionalidad }}</div>
+            </div>
+            <div class="data-group">
+                <div class="data-label">Nacimiento</div>
+                <div class="data-value">{{ info_personal.fecha_nacimiento|date:"d M, Y" }}</div>
+            </div>
+            <div class="data-group">
+                <div class="data-label">Estado Civil</div>
+                <div class="data-value">{{ info_personal.estado_civil }}</div>
+            </div>
+            {% if info_personal.sexo %}
+            <div class="data-group">
+                <div class="data-label">Sexo</div>
+                <div class="data-value">{{ info_personal.get_sexo_display }}</div>
+            </div>
+            {% endif %}
+
+            <div class="sidebar-header">Contacto</div>
+            <div class="data-group">
+                <div class="data-label">Teléfono</div>
+                <div class="data-value">{{ info_personal.telefono_movil }}</div>
+            </div>
+            <div class="data-group">
+                <div class="data-label">Email</div>
+                <div class="data-value" style="word-break: break-all;">{{ info_personal.email }}</div>
+            </div>
+            <div class="data-group">
+                <div class="data-label">Ubicación</div>
+                <div class="data-value">{{ info_personal.ubicacion }}</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="name-banner">
+                <h1 class="full-name">{{ info_personal.nombre_completo }}</h1>
+                <div class="job-title">{{ info_personal.titulo_profesional }}</div>
+            </div>
+
+            {% if mostrar_perfil %}
+            <div class="section-header">Perfil Profesional</div>
+            <div class="item-desc">{{ info_personal.resumen_profesional|linebreaksbr }}</div>
+            {% endif %}
+
+            {% if experiencias %}
+            <div class="section-header">Experiencia Laboral</div>
+            {% for exp in experiencias %}
+            <div class="item-container">
+                <div class="item-text">
+                    <div class="item-title">♦ {{ exp.cargo }}</div>
+                    <div class="item-meta">{{ exp.empresa }} | {{ exp.fecha_inicio|date:"Y" }} - {% if exp.fecha_fin %}{{ exp.fecha_fin|date:"Y" }}{% else %}Presente{% endif %}</div>
+                    <div class="item-meta" style="color: #00334E;">📍 {{ exp.lugar_empresa }}</div>
+                    <div class="item-desc">{{ exp.descripcion|linebreaksbr }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if mostrar_lista_cursos %}
+            <div class="section-header">Formación Académica</div>
+            {% for curso in cursos %}
+            <div class="item-container">
+                <div class="item-text">
+                    <div class="item-title">♦ {{ curso.nombre }}</div>
+                    <div class="item-meta">{{ curso.institucion }} | {% if curso.fecha_fin %}{{ curso.fecha_fin|date:"Y" }}{% endif %}</div>
+                    <div class="extra-info">Duración: {{ curso.total_horas }} horas</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if garage %}
+            <div class="section-header">Productos en Garage / Ventas</div>
+            {% for g in garage %}
+            <div class="item-container">
+                <div class="item-text {% if g.imagen %}with-image{% endif %}">
+                    <div class="item-title">♦ {{ g.nombre }}</div>
+                    <div class="item-meta">Estado: {{ g.get_estado_display }} | Valor: ${{ g.valor }}</div>
+                    <div class="item-desc">{{ g.descripcion|linebreaksbr }}</div>
+                </div>
+                {% if g.imagen %}
+                <div class="item-image-side">
+                    <img src="file:///{{ g.imagen.path }}" class="side-img">
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if proyectos %}
+            <div class="section-header">Proyectos</div>
+            {% for p in proyectos %}
+            <div class="item-container">
+                <div class="item-text">
+                    <div class="item-title">♦ {{ p.nombre }}</div>
+                    <div class="item-meta">Fecha: {{ p.fecha|date:"d/m/Y" }}</div>
+                    <div class="item-desc">{{ p.descripcion|linebreaksbr }}</div>
+                    <div class="extra-info">💻 {{ p.tecnologias }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if reconocimientos %}
+            <div class="section-header">Logros y Reconocimientos</div>
+            {% for logro in reconocimientos %}
+            <div class="item-container">
+                <div class="item-text">
+                    <div class="item-title">♦ {{ logro.titulo }}</div>
+                    <div class="item-meta">Entidad: {{ logro.entidad }} | {{ logro.fecha|date:"Y" }}</div>
+                    <div class="item-desc">{{ logro.descripcion|linebreaksbr }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    {% if incluir_anexos %}
+        {% for curso in cursos %}
+            {% if curso.certificado_file %}
+                <div class="page-break"></div>
+                <div class="anexo-container">
+                    <div style="background-color: #00334E; color: white; padding: 10pt; font-size: 18pt; font-weight: bold; text-transform: uppercase;">
+                        ANEXO: CERTIFICADO
+                    </div>
+                    <h2 style="color: #00334E; font-size: 20pt; margin: 15pt 0;">{{ curso.nombre }}</h2>
+                    <img src="file:///{{ curso.certificado_file.path }}" class="cert-img">
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

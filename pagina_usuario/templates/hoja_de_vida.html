@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hoja de Vida - {{ info_personal.nombre_completo }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+  <div class="row g-0" style="min-height: 100vh;">
+
+    <div class="col-lg-4 col-xl-3 bg-dark text-white p-4">
+      <div class="text-center mb-4 mt-3">
+        {% if info_personal.foto_perfil %}
+          <img src="{{ info_personal.foto_perfil.url }}" 
+               class="rounded-circle shadow mb-3 img-fluid" 
+               style="width: 160px; height: 160px; border-radius: 50%; object-fit: cover; border: 4px solid #3498db;"
+               alt="Foto de Perfil">
+        {% endif %}
+        <h4 class="fw-bold mb-1 text-uppercase">{{ info_personal.nombre_completo }}</h4>
+        <p class="badge bg-primary px-3">{{ info_personal.titulo_profesional }}</p>
+      </div>
+
+      <div class="mb-5 mt-5">
+        <h6 class="text-uppercase fw-bold text-info border-bottom pb-2 mb-3 small">Contacto y Ubicación</h6>
+        <ul class="list-unstyled small lh-lg">
+          <li><i class="bi bi-geo-alt-fill me-2 text-info"></i><strong>Domicilio:</strong> {{ info_personal.ubicacion }}</li>
+          <li><i class="bi bi-briefcase-fill me-2 text-info"></i><strong>Trabajo:</strong> {{ info_personal.direccion_trabajo|default:"Ninguna" }}</li>
+          <li><i class="bi bi-telephone-fill me-2 text-info"></i> {{ info_personal.telefono_movil }}</li>
+          <li><i class="bi bi-envelope-at-fill me-2 text-info"></i> {{ info_personal.email }}</li>
+        </ul>
+      </div>
+
+      <div class="mb-5">
+        <h6 class="text-uppercase fw-bold text-info border-bottom pb-2 mb-3 small">Enlaces y Redes</h6>
+        <div class="d-grid gap-2">
+          {% if info_personal.sitio_web %}
+            <a href="{{ info_personal.sitio_web }}" target="_blank" class="btn btn-sm btn-outline-light text-start">
+              <i class="bi bi-globe me-2"></i> Sitio Web Personal
+            </a>
+          {% endif %}
+          {% if info_personal.linkedin %}
+            <a href="{{ info_personal.linkedin }}" target="_blank" class="btn btn-sm btn-outline-light text-start">
+              <i class="bi bi-linkedin me-2"></i> LinkedIn
+            </a>
+          {% endif %}
+          {% if info_personal.github %}
+            <a href="{{ info_personal.github }}" target="_blank" class="btn btn-sm btn-outline-light text-start">
+              <i class="bi bi-github me-2"></i> GitHub
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8 col-xl-9 p-4 p-lg-5 bg-white">
+      <div class="d-flex justify-content-end mb-4 gap-2">
+        <a href="{% url 'pagina_usuario:landing' %}" class="btn btn-outline-secondary btn-sm">Volver al inicio</a>
+        <button type="button" class="btn btn-success btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalImprimir">
+          <i class="bi bi-printer-fill me-1"></i> Opciones de Impresión / PDF
+        </button>
+      </div>
+
+      <ul class="nav nav-tabs nav-justified mb-4 shadow-sm rounded bg-light" id="cvTabs">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#perfil">Mi Perfil</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#experiencia">Experiencia</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cursos">Cursos</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#logros">Logros</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#proyectos">Proyectos</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#garage">Garage</button></li>
+      </ul>
+
+      <div class="tab-content shadow-sm rounded p-4 bg-white border">
+        
+        <div class="tab-pane fade show active" id="perfil">
+          <h3 class="text-primary mb-4 border-bottom pb-2">Perfil Profesional</h3>
+          <p class="lh-base mb-4 text-secondary">{{ info_personal.resumen_profesional|linebreaks|default:"Sin descripción" }}</p>
+          
+          <div class="row mt-4 g-3 bg-light p-3 rounded">
+            <div class="col-12"><h6 class="text-uppercase fw-bold text-muted small border-bottom pb-2">Detalles Personales</h6></div>
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Nacionalidad:</strong> {{ info_personal.nacionalidad }}</p>
+              <p class="mb-1"><strong>Fecha de Nacimiento:</strong> {{ info_personal.fecha_nacimiento|date:"d M, Y" }}</p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-1"><strong>Estado Civil:</strong> {{ info_personal.estado_civil }}</p>
+              <p class="mb-1"><strong>Sexo:</strong> {{ info_personal.get_sexo_display }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="experiencia">
+          <h3 class="text-primary mb-3">Experiencia Laboral</h3>
+          {% for exp in experiencias %}
+            {% if exp.mostrar_en_cv %}
+            <div class="mb-4 border-bottom pb-3">
+              <h5 class="fw-bold mb-1">{{ exp.cargo }}</h5>
+              <p class="text-muted small mb-2">{{ exp.empresa }} | {{ exp.lugar_empresa }}</p>
+              <p class="mb-0 text-secondary">{{ exp.descripcion|linebreaks }}</p>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="tab-pane fade" id="cursos">
+          <h3 class="text-primary mb-3">Cursos y Capacitaciones</h3>
+          <div class="row">
+            {% for curso in cursos %}
+              {% if curso.mostrar_en_cv %}
+              <div class="col-md-6 mb-3">
+                <div class="p-3 border rounded h-100 bg-light">
+                  <h6 class="fw-bold mb-1">{{ curso.nombre }}</h6>
+                  <p class="small text-muted mb-1">{{ curso.institucion }}</p>
+                  <p class="x-small text-muted mb-2">Horas: {{ curso.total_horas }}</p>
+                  {% if curso.certificado_file %}
+                    <a href="{{ curso.certificado_file.url }}" target="_blank" class="btn btn-sm btn-primary w-100 mt-2">Ver Certificado</a>
+                  {% endif %}
+                </div>
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="logros">
+          <h3 class="text-primary mb-3">Logros y Reconocimientos</h3>
+          {% for rec in reconocimientos %}
+            {% if rec.mostrar_en_cv %}
+            <div class="mb-4 p-4 bg-light border-start border-primary border-4 shadow-sm rounded-end">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h5 class="mb-1 fw-bold text-dark">{{ rec.titulo }}</h5>
+                  <span class="badge bg-info text-dark mb-2">{{ rec.tipo }}</span>
+                </div>
+                <span class="text-muted fw-bold">{{ rec.fecha|date:"M Y" }}</span>
+              </div>
+              
+              <p class="mb-2 text-secondary">{{ rec.descripcion }}</p>
+              
+              <div class="row mt-3 pt-2 border-top">
+                <div class="col-md-6 small">
+                  <p class="mb-0"><strong>Entidad:</strong> {{ rec.entidad }}</p>
+                </div>
+                <div class="col-md-6 small text-md-end">
+                  <p class="mb-0 text-muted"><strong>Contacto:</strong> {{ rec.nombre_contacto }} ({{ rec.telefono_contacto }})</p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="tab-pane fade" id="proyectos">
+          <h3 class="text-primary mb-3">Proyectos Realizados</h3>
+          {% for pro in proyectos %}
+            {% if pro.mostrar_en_cv %}
+            <div class="mb-3 p-3 border rounded shadow-sm bg-white">
+              <div class="d-flex justify-content-between">
+                <h5 class="fw-bold text-dark mb-2">{{ pro.nombre }}</h5>
+                <span class="text-muted small">{{ pro.fecha|date:"d/m/Y" }}</span>
+              </div>
+              <p class="mb-2 text-secondary small">{{ pro.descripcion|linebreaks }}</p>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <span class="badge bg-dark">💻 {{ pro.tecnologias }}</span>
+                {% if pro.url %}
+                  <a href="{{ pro.url }}" target="_blank" class="btn btn-sm btn-outline-primary">Ver Proyecto</a>
+                {% endif %}
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="tab-pane fade" id="garage">
+          <h3 class="text-primary mb-3">Garage / Ventas</h3>
+          <div class="row">
+            {% for item in garage %}
+              {% if item.mostrar_en_cv %}
+              <div class="col-md-6 col-xl-4 mb-3">
+                <div class="card h-100 shadow-sm border-0">
+                  {% if item.imagen %}
+                    <img src="{{ item.imagen.url }}" class="card-img-top" style="height: 160px; object-fit: cover;">
+                  {% endif %}
+                  <div class="card-body p-2 text-center">
+                    <h6 class="card-title fw-bold mb-1 small">{{ item.nombre }}</h6>
+                    <span class="badge bg-success">${{ item.valor }}</span>
+                    <p class="x-small text-muted mt-2" style="font-size: 0.7rem;">{{ item.descripcion }}</p>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalImprimir" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0">
+      <form action="{% url 'pagina_usuario:cv_pdf' %}" method="get" target="_blank">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold">Opciones de Exportación</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="perfil" id="m_perfil" checked>
+            <label class="form-check-label ms-2" for="m_perfil">Perfil y Datos Personales</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="experiencia" id="m_exp" checked>
+            <label class="form-check-label ms-2" for="m_exp">Experiencia Laboral</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="cursos" id="m_cursos" checked>
+            <label class="form-check-label ms-2" for="m_cursos">Cursos</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="reconocimientos" id="m_logros" checked>
+            <label class="form-check-label ms-2" for="m_logros">Logros y Reconocimientos</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" name="proyectos" id="m_proy" checked>
+            <label class="form-check-label ms-2" for="m_proy">Proyectos</label>
+          </div>
+          <hr>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" name="anexos" id="m_anexos" checked>
+            <label class="form-check-label fw-bold text-success" for="m_anexos">Incluir Certificados</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success w-100 fw-bold">Descargar PDF Profesional</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
